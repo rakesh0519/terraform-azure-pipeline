@@ -37,7 +37,7 @@ steps:
       provider: 'azurerm'
       command: 'plan'
       workingDirectory: 'Terraform'
-      environmentServiceNameAzureRM: '<Your-Service-Connection-Name>'
+      environmentServiceNameAzureRM: 'AzureConnection'
 
   - task: TerraformTaskV2@2
     displayName: 'Terraform Apply'
@@ -45,5 +45,5 @@ steps:
       provider: 'azurerm'
       command: 'apply'
       workingDirectory: 'Terraform'
-      environmentServiceNameAzureRM: 'AzureServiceConnection'
+      environmentServiceNameAzureRM: 'AzureConnection'
       commandOptions: '-auto-approve'
