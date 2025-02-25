@@ -1,34 +1,49 @@
 trigger:
-  - main
+  - main  # Runs when you push to the main branch
 
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  - name: tf_version
+    value: '1.5.0'  # Adjust based on your Terraform version
+
 steps:
+  - checkout: self  # Clone your repo
+
   - task: TerraformInstaller@0
     displayName: 'Install Terraform'
     inputs:
-      terraformVersion: 'latest'
+      terraformVersion: $(tf_version)
 
-  - checkout: self  # Fetch code from GitHub
-
-  - task: AzureCLI@2
-    displayName: 'Login to Azure'
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform Init'
     inputs:
-      azureSubscription: 'AzureServiceConnection'  # Make sure this matches your service connection name
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        az account show
-        az account set --subscription 'a9abbc1e-f3f3-4acd-94f0-81d6b4d5289a'
+      provider: 'azurerm'
+      command: 'init'
+      workingDirectory: 'Terraform'
+      backendServiceArm: '<Your-Service-Connection-Name>'
 
-  - script: |
-      terraform init
-      terraform plan -out=tfplan
-    workingDirectory: Terraform
-    displayName: 'Terraform Init & Plan'
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform Validate'
+    inputs:
+      provider: 'azurerm'
+      command: 'validate'
+      workingDirectory: 'Terraform'
 
-  - script: |
-      terraform apply -auto-approve tfplan
-    workingDirectory: Terraform
+  - task: TerraformTaskV2@2
+    displayName: 'Terraform Plan'
+    inputs:
+      provider: 'azurerm'
+      command: 'plan'
+      workingDirectory: 'Terraform'
+      environmentServiceNameAzureRM: '<Your-Service-Connection-Name>'
+
+  - task: TerraformTaskV2@2
     displayName: 'Terraform Apply'
+    inputs:
+      provider: 'azurerm'
+      command: 'apply'
+      workingDirectory: 'Terraform'
+      environmentServiceNameAzureRM: 'AzureServiceConnection'
+      commandOptions: '-auto-approve'
