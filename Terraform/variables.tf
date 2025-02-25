@@ -8,8 +8,3 @@ variable "location" {
   type        = string
   default     = "East US"
 }
-
-variable "tenant_id" {
-  description = "The Azure Tenant ID"
-  type        = string
-}
