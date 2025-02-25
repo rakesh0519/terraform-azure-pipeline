@@ -12,15 +12,14 @@ steps:
 
   - checkout: self  # Fetch code from GitHub
 
-  - task: AzureCLI@2
-    displayName: 'Login to Azure'
-    inputs:
-      azureSubscription: 'AzureConnection'  # Your service connection
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        az login --identity
-        az account set --subscription 'a9abbc1e-f3f3-4acd-94f0-81d6b4d5289a'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'AzureServiceConnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az account show
+      az account set --subscription 'a9abbc1e-f3f3-4acd-94f0-81d6b4d5289a'
 
   - script: |
       terraform init
