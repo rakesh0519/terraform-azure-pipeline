@@ -9,11 +9,6 @@ variable "location" {
   default     = "eastus"
 }
 
-variable "storage_account_name" {
-  description = "The name of the Storage Account"
-  type        = string
-}
-
 variable "key_vault_name" {
   description = "The name of the Key Vault"
   type        = string
