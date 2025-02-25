@@ -6,10 +6,10 @@ pool:
 
 variables:
   - name: tf_version
-    value: '1.5.0'  # Adjust based on your Terraform version
+    value: '1.5.0'  # Terraform version
 
 steps:
-  - checkout: self  # Clone your repo
+  - checkout: self  # Clone the repo
 
   - task: TerraformInstaller@0
     displayName: 'Install Terraform'
@@ -21,29 +21,25 @@ steps:
     inputs:
       provider: 'azurerm'
       command: 'init'
-      workingDirectory: 'Terraform'
-      backendServiceArm: 'AzureConnection'  # Ensure this matches your service connection name
+      backendServiceArm: 'AzureConnection'
 
   - task: TerraformTaskV2@2
     displayName: 'Terraform Validate'
     inputs:
       provider: 'azurerm'
       command: 'validate'
-      workingDirectory: 'Terraform'
 
   - task: TerraformTaskV2@2
     displayName: 'Terraform Plan'
     inputs:
       provider: 'azurerm'
       command: 'plan'
-      workingDirectory: 'Terraform'
-      backendServiceArm: 'AzureConnection'  # Changed to correct input name
+      environmentServiceNameAzureRM: 'AzureConnection'
 
   - task: TerraformTaskV2@2
     displayName: 'Terraform Apply'
     inputs:
       provider: 'azurerm'
       command: 'apply'
-      workingDirectory: 'Terraform'
-      backendServiceArm: 'AzureConnection'  # Changed to correct input name
+      environmentServiceNameAzureRM: 'AzureConnection'
       commandOptions: '-auto-approve'
