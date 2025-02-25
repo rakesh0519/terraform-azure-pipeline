@@ -1,15 +1,15 @@
 variable "resource_group_name" {
-  description = "The name of the existing Resource Group"
+  description = "The name of the resource group"
   type        = string
 }
 
 variable "location" {
-  description = "Azure region where resources will be deployed"
+  description = "The Azure region to deploy the resources"
   type        = string
-  default     = "eastus"
+  default     = "East US"
 }
 
-variable "key_vault_name" {
-  description = "The name of the Key Vault"
+variable "tenant_id" {
+  description = "The Azure Tenant ID"
   type        = string
 }
