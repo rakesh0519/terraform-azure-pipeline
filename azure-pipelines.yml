@@ -1,5 +1,5 @@
 trigger:
-  - main  # Change this if your default branch is different
+  - main
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -13,20 +13,19 @@ steps:
   - checkout: self  # Fetch code from GitHub
 
   - task: AzureCLI@2
-    displayName: 'Azure Login'
+    displayName: 'Login to Azure'
     inputs:
-      azureSubscription: 'AzureServiceConnection'
+      azureSubscription: 'AzureServiceConnection'  # Make sure this matches your service connection name
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        az login --identity
+        az account show
         az account set --subscription 'a9abbc1e-f3f3-4acd-94f0-81d6b4d5289a'
 
   - script: |
       terraform init
-      terraform validate
       terraform plan -out=tfplan
-    workingDirectory: Terraform  # Ensure this matches your folder structure
+    workingDirectory: Terraform
     displayName: 'Terraform Init & Plan'
 
   - script: |
