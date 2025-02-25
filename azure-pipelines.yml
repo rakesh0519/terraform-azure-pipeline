@@ -12,22 +12,46 @@ steps:
 
   - checkout: self  # Fetch code from GitHub
 
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'AzureServiceConnection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az account show
-      az account set --subscription 'a9abbc1e-f3f3-4acd-94f0-81d6b4d5289a'
+  - task: AzureCLI@2
+    displayName: 'Azure CLI Login & Subscription Setup'
+    inputs:
+      azureSubscription: 'AzureServiceConnection'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        set -e  # Stop execution on first error
+
+        echo "Attempting Azure Login..."
+        az account show || { echo "Azure login failed!"; exit 1; }
+
+        echo "Setting Subscription..."
+        az account set --subscription 'a9abbc1e-f3f3-4acd-94f0-81d6b4d5289a' || { echo "Subscription setting failed!"; exit 1; }
+
+        echo "Azure authentication successful!"
 
   - script: |
-      terraform init
+      echo "Validating Terraform Configuration..."
+      terraform validate
+    workingDirectory: Terraform
+    displayName: 'Terraform Validate'
+
+  - script: |
+      echo "Initializing Terraform..."
+      terraform init -backend-config="storage_account_name=<STORAGE_ACCOUNT>" \
+                     -backend-config="container_name=tfstate" \
+                     -backend-config="key=terraform.tfstate" \
+                     -backend-config="subscription_id=a9abbc1e-f3f3-4acd-94f0-81d6b4d5289a"
+    workingDirectory: Terraform
+    displayName: 'Terraform Init'
+
+  - script: |
+      echo "Running Terraform Plan..."
       terraform plan -out=tfplan
     workingDirectory: Terraform
-    displayName: 'Terraform Init & Plan'
+    displayName: 'Terraform Plan'
 
   - script: |
+      echo "Applying Terraform Changes..."
       terraform apply -auto-approve tfplan
     workingDirectory: Terraform
     displayName: 'Terraform Apply'
