@@ -22,7 +22,7 @@ steps:
       provider: 'azurerm'
       command: 'init'
       workingDirectory: 'Terraform'
-      backendServiceArm: '<Your-Service-Connection-Name>'
+      backendServiceArm: 'AzureConnection'  # Ensure this matches your service connection name
 
   - task: TerraformTaskV2@2
     displayName: 'Terraform Validate'
@@ -37,7 +37,7 @@ steps:
       provider: 'azurerm'
       command: 'plan'
       workingDirectory: 'Terraform'
-      environmentServiceNameAzureRM: 'AzureConnection'
+      backendServiceArm: 'AzureConnection'  # Changed to correct input name
 
   - task: TerraformTaskV2@2
     displayName: 'Terraform Apply'
@@ -45,5 +45,5 @@ steps:
       provider: 'azurerm'
       command: 'apply'
       workingDirectory: 'Terraform'
-      environmentServiceNameAzureRM: 'AzureConnection'
+      backendServiceArm: 'AzureConnection'  # Changed to correct input name
       commandOptions: '-auto-approve'
